@@ -1,0 +1,68 @@
+from storage import simpan_semua
+from simpan_fungsi import jeda
+
+def user_create_review(user, daftar_film, daftar_review):
+    if len(daftar_film) == 0: 
+        print("Belum ada film yang tersedia")
+        jeda()
+        return daftar_review
+
+    print("Daftar film tersedia")
+    for i, film in enumerate(daftar_film): 
+        print(f"{i + 1}. {film['judul']} (genre : { film['genre']})")
+
+    try: 
+        pilihan = int(input("Pilih nomor film yang ingin direview (0 untuk batal): "))
+        if pilihan == 0:
+            print("Pembuatan ulasan dibatalkan.")
+            jeda()
+            return daftar_review
+        if pilihan < 1 or pilihan > len(daftar_film): 
+            print("Nomor film tidak valid")
+            jeda()
+            return daftar_review
+
+    except ValueError: 
+        print("Masukkan input berupa angka")
+        jeda()
+        return daftar_review
+    
+    film_terpilih = daftar_film[ pilihan - 1]
+    for review in daftar_review:
+        if review["username"] == user["username"] and review["judul"] == film_terpilih["judul"]:
+            print("Kamu sudah pernah mereview film ini")
+            jeda()
+            return daftar_review
+
+    print(f"Menulis ulasan untuk {film_terpilih['judul']}")
+
+    while True: 
+        try: 
+            rating = int(input("rating 1-10: "))
+            if rating < 1 or rating > 10: 
+                raise ValueError
+            break
+        except ValueError: 
+            print("Rating harus angka 1-10")
+
+    while True: 
+            try: 
+                ulasan = input("ulasan: ").strip()
+                if len(ulasan) == 0: 
+                    raise ValueError("Ulasan tidak boleh kosong")
+                break
+            except ValueError as e: 
+                print(e)
+
+    daftar_review.append({
+        "username": user["username"],
+        "judul": film_terpilih["judul"],
+        "genre": film_terpilih["genre"],
+        "rating": rating,
+        "ulasan": ulasan,
+    })
+    simpan_semua()
+    
+    print(f"Review untuk '{film_terpilih['judul']}' berhasil disimpan")
+    jeda()
+    return daftar_review
